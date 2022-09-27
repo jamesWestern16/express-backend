@@ -13,9 +13,9 @@ const topScores = [502]
 //   })
   
 app.get('/scores', (req, res) => {
-    res.send(req.body.scores)
-    console.log(req.body.scores);
-  })
+  console.log(topScores);
+  res.send(topScores)
+})
 
 app.post('/scores', (req, res) => {
     console.log(req.body.scores);
