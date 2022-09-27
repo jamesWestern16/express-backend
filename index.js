@@ -2,18 +2,19 @@ const express = require('express')
 const app = express()
 app.use(express.json()) 
 const port = 3000
-const topScores = [397]
+const topScores = [502]
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+// app.get('/', (req, res) => {
+//   res.send('Hello World!')
+// })
 
-app.get('/bye', (req, res) => {
-    res.send('Goodbye World!')
-  })
+// app.get('/bye', (req, res) => {
+//     res.send('Goodbye World!')
+//   })
   
 app.get('/scores', (req, res) => {
-    res.send(topScores)
+    res.send(req.body.scores)
+    console.log(req.body.scores);
   })
 
 app.post('/scores', (req, res) => {
@@ -22,6 +23,9 @@ app.post('/scores', (req, res) => {
     res.send('Goodbye World!')
   })
 
+app.get('/top-scores', (req, res) => {
+  res.send(req.body.scores)
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
