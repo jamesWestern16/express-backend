@@ -29,11 +29,19 @@ app.post('/scores', (req, res) => {
 
 app.get('/top-scores', (req, res) => {
   console.log(topScores);
+  const limit = req.query.limit ? req.query.limit : 5;
+  console.log(limit);
   topScores.sort((a,b) => b - a)
   console.log(topScores);
-  const slicedTopScores = topScores.slice(0, 5);
+  const slicedTopScores = topScores.slice(0, limit);
   console.log(slicedTopScores);
   res.send(slicedTopScores)
+})
+
+app.delete('/scores', (req, res) => {
+  console.log(topScores);
+  topScores = []
+  res.send(topScores)
 })
 
 app.listen(port, () => {
