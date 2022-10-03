@@ -24,7 +24,10 @@ app.post('/scores', (req, res) => {
   })
 
 app.get('/top-scores', (req, res) => {
-  res.send(req.body.scores)
+  console.log(topScores);
+  topScores.sort((a,b) => a - b)
+  console.log(topScores);
+  res.send(topScores)
 })
 
 app.listen(port, () => {
