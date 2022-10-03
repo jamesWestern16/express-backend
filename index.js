@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 app.use(express.json()) 
 const port = 3000
-const topScores = [502]
+const topScores = [502, 102, 10, 11, 12, 15, 50]
 
 // app.get('/', (req, res) => {
 //   res.send('Hello World!')
@@ -25,9 +25,11 @@ app.post('/scores', (req, res) => {
 
 app.get('/top-scores', (req, res) => {
   console.log(topScores);
-  topScores.sort((a,b) => a - b)
+  topScores.sort((a,b) => b - a)
   console.log(topScores);
-  res.send(topScores)
+  const slicedTopScores = topScores.slice(0, 5);
+  console.log(slicedTopScores);
+  res.send(slicedTopScores)
 })
 
 app.listen(port, () => {
