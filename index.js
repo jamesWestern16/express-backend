@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 app.use(express.json()) 
 const port = 3000
-const topScores = [502, 102, 10, 11, 12, 15, 50]
+let topScores = [502, 102, 10, 11, 12, 15, 50]
 
 // app.get('/', (req, res) => {
 //   res.send('Hello World!')
@@ -19,8 +19,12 @@ app.get('/scores', (req, res) => {
 
 app.post('/scores', (req, res) => {
     console.log(req.body.scores);
-    topScores.push (req.body.scores)
-    res.send('Goodbye World!')
+    if (Array.isArray(req.body.scores)) {
+      topScores = [...topScores, ...req.body.scores]  
+    } else {
+        topScores.push (req.body.scores)
+    }
+    res.send('stored')
   })
 
 app.get('/top-scores', (req, res) => {
