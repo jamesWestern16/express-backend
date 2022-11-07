@@ -13,14 +13,14 @@ let topScores = [502, 102, 10, 11, 12, 15, 50]
 //     res.send('Goodbye World!')
 //   })
 var db = new sqlite3.Database('./scores.db');
-db.run('CREATE TABLE IF NOT EXISTS scores(id INTEGER, player_name TEXT, score INTEGER)');
+db.run('CREATE TABLE IF NOT EXISTS scores(id INTEGER PRIMARY KEY, player_name TEXT, score INTEGER)');
 
 function insertScore(score, name) {
-  const id = 1;
+  
     
 
   db.serialize(()=>{
-    db.run('INSERT INTO scores(id,player_name,score) VALUES(?,?,?)', [id, name, score], function(err) {
+    db.run('INSERT INTO scores(player_name,score) VALUES(?,?)', [name, score], function(err) {
       if (err) {
         return console.log(err.message);
       }
