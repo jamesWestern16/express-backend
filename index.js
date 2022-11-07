@@ -1,3 +1,4 @@
+const sqlite3 = require('sqlite3').verbose();
 const express = require('express')
 const app = express()
 app.use(express.json()) 
@@ -11,7 +12,24 @@ let topScores = [502, 102, 10, 11, 12, 15, 50]
 // app.get('/bye', (req, res) => {
 //     res.send('Goodbye World!')
 //   })
-  
+var db = new sqlite3.Database('./scores.db');
+db.run('CREATE TABLE IF NOT EXISTS scores(id INTEGER, player_name TEXT, score INTEGER)');
+
+function insertScore(score, name) {
+  const id = 1;
+    
+
+  db.serialize(()=>{
+    db.run('INSERT INTO scores(id,player_name,score) VALUES(?,?,?)', [id, name, score], function(err) {
+      if (err) {
+        return console.log(err.message);
+      }
+      console.log("New score has been added");
+      // res.send("New employee has been added into the database with ID = "+req.params.id+ " and Name = "+req.params.name);
+    });
+});}
+
+
 app.get('/scores', (req, res) => {
   console.log(topScores);
   res.send(topScores)
@@ -19,11 +37,12 @@ app.get('/scores', (req, res) => {
 
 app.post('/scores', (req, res) => {
     console.log(req.body.scores);
-    if (Array.isArray(req.body.scores)) {
-      topScores = [...topScores, ...req.body.scores]  
-    } else {
-        topScores.push (req.body.scores)
-    }
+    // if (Array.isArray(req.body.scores)) {
+    //   topScores = [...topScores, ...req.body.scores]  
+    // } else {
+    //     topScores.push (req.body.scores)
+    // }
+    insertScore(req.body.scores, req.body.player_name);
     res.send('stored')
   })
 
