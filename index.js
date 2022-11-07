@@ -1,4 +1,5 @@
-const sqlite3 = require('sqlite3').verbose();
+// const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require('promised-sqlite3');
 const express = require('express')
 const app = express()
 app.use(express.json()) 
@@ -12,14 +13,13 @@ let topScores = [502, 102, 10, 11, 12, 15, 50]
 // app.get('/bye', (req, res) => {
 //     res.send('Goodbye World!')
 //   })
-var db = new sqlite3.Database('./scores.db');
+
+// var db = new sqlite3.Database('./scores.db');
+var db = new sqlite3.PromisedDatabase();
 db.run('CREATE TABLE IF NOT EXISTS scores(id INTEGER PRIMARY KEY, player_name TEXT, score INTEGER)');
 
 function insertScore(score, name) {
-  
-    
-
-  db.serialize(()=>{
+    db.serialize(()=>{
     db.run('INSERT INTO scores(player_name,score) VALUES(?,?)', [name, score], function(err) {
       if (err) {
         return console.log(err.message);
@@ -29,10 +29,39 @@ function insertScore(score, name) {
     });
 });}
 
+async function getScores() {
+  await db.open('./scores2.db')
+  let scores = [];
+    await db.serialize(()=>{
+    db.all('SELECT id ID, player_name NAME, score SCORE FROM scores', [], function(err,rows){     
+      if(err){
+        res.send("Error encountered while displaying");
+        return console.error(err.message);
+      }
+      console.log(rows);
+      scores = rows
 
-app.get('/scores', (req, res) => {
-  console.log(topScores);
-  res.send(topScores)
+
+      // return rows
+      // scores.push(row)
+      // console.log(` ID: ${row.ID}, Name: ${row.NAME}, Score: ${row.SCORE}`);
+      // console.log("Entry displayed successfully");
+    // }, function() {
+    //     console.log("Finished");
+    //     return scores
+    });
+  });
+  return scores;
+};
+
+
+app.get('/scores', async (req, res) => {
+  const scores = await getScores();
+  
+  
+  
+  console.log(scores);
+  res.send(scores)
 })
 
 app.post('/scores', (req, res) => {
