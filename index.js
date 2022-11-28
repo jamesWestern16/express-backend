@@ -16,14 +16,24 @@ async function insertScore(score, name) {
     return await db.run('INSERT INTO scores (player_name,score) VALUES(?,?)', [name, score]);
 }
 
-async function getScores() {
-    return await db.all('SELECT id ID, player_name NAME, score SCORE FROM scores', []);
+async function getScores(options = {}) {
+  let sql = `
+  SELECT id ID, player_name NAME, score SCORE
+  FROM scores
+  ORDER BY score DESC
+`
+  if (options.limit) {
+    sql = `${sql} LIMIT ${options.limit}`
+  }
+    return await db.all(sql, []);
 };
 
 
 app.get('/scores', async (req, res) => {
   try {
-    const scores = await getScores();
+    const scores = await getScores({
+      limit: req.query.limit ?? 10
+    });
     res.send(scores);
   } catch(error) {
     console.log(error);
@@ -43,17 +53,6 @@ app.post('/scores', async (req, res) => {
     res.send('stored')
   })
 
-app.get('/top-scores', (req, res) => {
-  console.log(topScores);
-  const limit = req.query.limit ? req.query.limit : 5;
-  console.log(limit);
-  topScores.sort((a,b) => b - a)
-  console.log(topScores);
-  const slicedTopScores = topScores.slice(0, limit);
-  console.log(slicedTopScores);
-  res.send(slicedTopScores)
-})
-
 app.delete('/scores', (req, res) => {
   console.log(topScores);
   topScores = []
@@ -63,5 +62,7 @@ app.delete('/scores', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+
 
 setup();
