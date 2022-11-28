@@ -17,14 +17,19 @@ async function insertScore(score, name) {
 }
 
 async function getScores() {
-  return await db.all('SELECT id ID, player_name NAME, score SCORE FROM scores', []);
+    return await db.all('SELECT id ID, player_name NAME, score SCORE FROM scores', []);
 };
 
 
 app.get('/scores', async (req, res) => {
-  const scores = await getScores();
-  console.log(scores);
-  res.send(scores)
+  try {
+    const scores = await getScores();
+    res.send(scores);
+  } catch(error) {
+    console.log(error);
+    res.status(500);
+    res.send("Failed to get scores");
+  }
 })
 
 app.post('/scores', async (req, res) => {
