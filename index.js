@@ -43,15 +43,21 @@ app.get('/scores', async (req, res) => {
 })
 
 app.post('/scores', async (req, res) => {
-    console.log(req.body.scores);
+  console.log(req.body.scores);
     // if (Array.isArray(req.body.scores)) {
     //   topScores = [...topScores, ...req.body.scores]
     // } else {
     //     topScores.push (req.body.scores)
     // }
-    await insertScore(req.body.scores, req.body.player_name);
+  try {
+    const scores = await insertScore(req.body.scores, req.body.player_name);
     res.send('stored')
-  })
+  } catch(error) {
+      console.log(error);
+      res.status(500);
+      res.send("Failed to post scores")
+  }
+})
 
 app.delete('/scores', (req, res) => {
   console.log(topScores);
