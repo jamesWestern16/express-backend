@@ -1,12 +1,13 @@
+// Variables
+
 const sqlite3 = require('promised-sqlite3');
 const express = require('express')
 const app = express()
 app.use(express.json())
 const port = 3000
-let topScores = [502, 102, 10, 11, 12, 15, 50]
-ascDesc = "ASC"
-
 const db = new sqlite3.PromisedDatabase();
+
+// Functions
 
 async function setup() {
   await db.open("./scores.db");
@@ -31,6 +32,15 @@ async function getScores(options = {}) {
   return await db.all(sql, []);
 };
 
+async function deleteScores() {
+  // deleteSelection = 1; 
+  let sql = `
+  DELETE FROM scores
+  WHERE id = "1"
+  `
+};
+
+// Operations
 
 app.get('/scores', async (req, res) => {
   try {
@@ -62,16 +72,13 @@ app.post('/scores', async (req, res) => {
   }
 })
 
-app.delete('/scores', (req, res) => {
-  console.log(topScores);
-  topScores = []
-  res.send(topScores)
+app.delete('/scores', async (req, res) => {
+  await deleteScores();
+  res.send("Deleted")
 })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-
-
 
 setup();
