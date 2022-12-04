@@ -4,6 +4,7 @@ const app = express()
 app.use(express.json())
 const port = 3000
 let topScores = [502, 102, 10, 11, 12, 15, 50]
+ascDesc = "ASC"
 
 const db = new sqlite3.PromisedDatabase();
 
@@ -20,12 +21,14 @@ async function getScores(options = {}) {
   let sql = `
   SELECT id ID, player_name NAME, score SCORE
   FROM scores
-  ORDER BY score DESC
-`
+  `
   if (options.limit) {
     sql = `${sql} LIMIT ${options.limit}`
   }
-    return await db.all(sql, []);
+  if (options.order) {
+    sql = `${sql} ORDER BY score ${options.order}`
+  }
+  return await db.all(sql, []);
 };
 
 
