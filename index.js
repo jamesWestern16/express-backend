@@ -32,12 +32,13 @@ async function getScores(options = {}) {
   return await db.all(sql, []);
 };
 
-async function deleteScores() {
+async function deleteScores(id) {
   // deleteSelection = 1; 
   let sql = `
   DELETE FROM scores
-  WHERE id = "1"
+  WHERE id = ${id}
   `
+  return await db.run(sql);
 };
 
 // Operations
@@ -75,8 +76,22 @@ app.post('/scores', async (req, res) => {
 })
 
 app.delete('/scores', async (req, res) => {
-  await deleteScores();
-  res.send("Deleted")
+  const id = req.query.id
+  if (!id) {
+    res.status(400);
+    res.send("Score ID not provided");
+    return;
+  }
+  try {
+    const result = await deleteScores(id);
+    // console.log(result);
+    const responseMessage = result.changes ? "Score deleted" : "No score with this ID"
+    res.send(responseMessage);
+  } catch(error) {
+    console.log(error);
+    res.status(500);
+    res.send("Failed to delete score")
+  }
 })
 
 app.listen(port, () => {
