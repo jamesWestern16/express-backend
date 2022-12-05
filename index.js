@@ -23,11 +23,11 @@ async function getScores(options = {}) {
   SELECT id ID, player_name NAME, score SCORE
   FROM scores
   `
-  if (options.limit) {
-    sql = `${sql} LIMIT ${options.limit}`
-  }
   if (options.order) {
     sql = `${sql} ORDER BY score ${options.order}`
+  }
+  if (options.limit) {
+    sql = `${sql} LIMIT ${options.limit}`
   }
   return await db.all(sql, []);
 };
@@ -44,9 +44,11 @@ async function deleteScores() {
 
 app.get('/scores', async (req, res) => {
   try {
-    const scores = await getScores({
-      limit: req.query.limit ?? 10
-    });
+    const builtOptions = {
+      limit: req.query.limit ?? 10,
+      order: req.query.order ?? "DESC"
+    }
+    const scores = await getScores(builtOptions);
     res.send(scores);
   } catch(error) {
     console.log(error);
@@ -66,9 +68,9 @@ app.post('/scores', async (req, res) => {
     const scores = await insertScore(req.body.scores, req.body.player_name);
     res.send('stored')
   } catch(error) {
-      console.log(error);
-      res.status(500);
-      res.send("Failed to post scores")
+    console.log(error);
+    res.status(500);
+    res.send("Failed to save scores")
   }
 })
 
