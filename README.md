@@ -4,6 +4,10 @@ To run the server use the following command:
 
 `node index.js`
 
+To run the server in development environment use the following command:
+
+`npm start`
+
 ## To-do
 
 1) Add error handling to post scores - *Done*
